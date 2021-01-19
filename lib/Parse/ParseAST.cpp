@@ -14,7 +14,11 @@ ParseAST(Sema &S, const InputKind &Lang, bool PrintStats) {
   auto P = std::make_unique<Parser>(S.Lex, S, S.Diags);
   switch (Lang) {
   case InputKind::Sol: {
-    return P->parse();
+    auto SUs = P->parse();
+    for (auto &SU : SUs) {
+      S.resolveType(*SU);
+    }
+    return SUs;
   }
   case InputKind::Yul: {
     std::vector<std::unique_ptr<SourceUnit>> Ret;
